@@ -38,7 +38,7 @@ def run_openai_rag():
         )
 
     # 5. The User Asks a Question
-    user_query = "Show me men's shoes which are on discount?"
+    user_query = "Show me all Adidas shoes on sale and their prices?"
     print(f"\nUser Query: {user_query}")
 
     # 6. Convert the Query into a Vector to Search the DB
@@ -58,6 +58,14 @@ def run_openai_rag():
     print(f"Retrieved Context from DB:\n{retrieved_context}")
 
     # 8. Hand the Context and the Query to OpenAI's LLM
+    ## Because you are using text-embedding-3-small, the vector database looks for semantic similarity.
+    ## The words "Adidas", "shoes", and "prices" are incredibly strong matches.
+    ## Your vector DB is almost certainly going to return the A100 model
+    ## because it looks like the right kind of data, completely ignoring the fact that sale=no directly violates the user's intent.
+    ## You tried to fix this using the System Prompt (CRITICAL: Only list specific shoe models...), forcing the LLM to do the heavy filtering.
+    ## But relying on the LLM to clean up bad database results is risky and wastes tokens.
+
+       You tried to fix this using the System Prompt (CRITICAL: Only list specific shoe models...), forcing the LLM to do the heavy filtering. But relying on the LLM to clean up bad database results is risky and wastes tokens.
     print("\nGenerating answer with GPT-4o-mini...")
     completion = openai_client.chat.completions.create(
         model="gpt-4o-mini",
